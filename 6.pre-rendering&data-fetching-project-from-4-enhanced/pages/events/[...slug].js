@@ -3,27 +3,56 @@ import { useRouter } from "next/router";
 import { getFilteredEvents } from "../../helpers/api-util";
 import EventList from "../../components/events/event-list";
 import ResultsTitle from "../../components/events/results-title";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Button from "../../components/ui/button";
 import ErrorAlert from "../../components/ui/error-alert";
+import useSWR from "swr";
 
 function FilteredEventsPage(props) {
+  const [loadedEvents, setLoadedEventsState] = useState();
   const router = useRouter();
 
-  // const filterData = router.query.slug;
-  // // console.log(filterData);
+  const filterData = router.query.slug;
+  // console.log(filterData);
+  const { data, error } = useSWR(
+    "https://next-js-course-pre-rendering-default-rtdb.europe-west1.firebasedatabase.app/events.json",
+    (url) => fetch(url).then((res) => res.json())
+  );
 
-  // if (!filterData) {
-  //   return <p className='center'>Loading...</p>;
-  // }
+  useEffect(() => {
+    if (data) {
+      const events = [];
 
-  // const filteredYear = filterData[0];
-  // const filteredMonth = filterData[1];
+      for (const key in data) {
+        events.push({
+          id: key,
+          ...data[key],
+        });
+      }
 
-  // const numYear = +filteredYear;
-  // const numMonth = +filteredMonth;
+      setLoadedEventsState(events);
+    }
+  }, [data]);
 
-  if (props.hasError) {
+  if (!loadedEvents) {
+    return <p className='center'>Loading...</p>;
+  }
+
+  const filteredYear = filterData[0];
+  const filteredMonth = filterData[1];
+
+  const numYear = +filteredYear;
+  const numMonth = +filteredMonth;
+
+  if (
+    isNaN(numYear) ||
+    isNaN(numMonth) ||
+    numYear > 2030 ||
+    numYear < 2021 ||
+    numMonth > 12 ||
+    numMonth < 1 ||
+    error
+  ) {
     return (
       <>
         <ErrorAlert>
@@ -36,7 +65,15 @@ function FilteredEventsPage(props) {
     );
   }
 
-  const filteredEvents = props.events;
+  let filteredEvents = loadedEvents.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getFullYear() === numYear &&
+      eventDate.getMonth() === numMonth - 1
+    );
+  });
+
+  // const filteredEvents = props.events;
   // const filteredEvents = getFilteredEvents({
   //   year: numYear,
   //   month: numMonth,
@@ -55,8 +92,8 @@ function FilteredEventsPage(props) {
     );
   }
 
-  // const date = new Date(numYear, numMonth - 1);
-  const date = new Date(props.date.numYear, props.date.numMonth - 1);
+  const date = new Date(numYear, numMonth - 1);
+  // const date = new Date(props.date.numYear, props.date.numMonth - 1);
 
   return (
     <Fragment>
@@ -66,46 +103,47 @@ function FilteredEventsPage(props) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const { params } = context;
-  const filterData = params.slug;
+//this is not needed when we use client side fetching
+// export async function getServerSideProps(context) {
+//   const { params } = context;
+//   const filterData = params.slug;
 
-  const filteredYear = filterData[0];
-  const filteredMonth = filterData[1];
+//   const filteredYear = filterData[0];
+//   const filteredMonth = filterData[1];
 
-  const numYear = +filteredYear;
-  const numMonth = +filteredMonth;
+//   const numYear = +filteredYear;
+//   const numMonth = +filteredMonth;
 
-  if (
-    isNaN(numYear) ||
-    isNaN(numMonth) ||
-    numYear > 2030 ||
-    numYear < 2021 ||
-    numMonth > 12 ||
-    numMonth < 1
-  ) {
-    return {
-      props: { hasError: true },
-      // notFound: true,
-      // redirect:{
-      //   destination:"/error"
-      // }
-    };
-  }
-  const filteredEvents = await getFilteredEvents({
-    year: numYear,
-    month: numMonth,
-  });
+//   if (
+//     isNaN(numYear) ||
+//     isNaN(numMonth) ||
+//     numYear > 2030 ||
+//     numYear < 2021 ||
+//     numMonth > 12 ||
+//     numMonth < 1
+//   ) {
+//     return {
+//       props: { hasError: true },
+//       // notFound: true,
+//       // redirect:{
+//       //   destination:"/error"
+//       // }
+//     };
+//   }
+//   const filteredEvents = await getFilteredEvents({
+//     year: numYear,
+//     month: numMonth,
+//   });
 
-  return {
-    props: {
-      events: filteredEvents,
-      date: {
-        year: numYear,
-        month: numMonth,
-      },
-    },
-  };
-}
+//   return {
+//     props: {
+//       events: filteredEvents,
+//       date: {
+//         year: numYear,
+//         month: numMonth,
+//       },
+//     },
+//   };
+// }
 
 export default FilteredEventsPage;
