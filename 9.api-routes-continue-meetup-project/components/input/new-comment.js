@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import classes from './new-comment.module.css';
+import { useRef, useState } from "react";
+import classes from "./new-comment.module.css";
 
 function NewComment(props) {
   const [isInvalid, setIsInvalid] = useState(false);
@@ -17,12 +17,12 @@ function NewComment(props) {
 
     if (
       !enteredEmail ||
-      enteredEmail.trim() === '' ||
-      !enteredEmail.includes('@') ||
+      enteredEmail.trim() === "" ||
+      !enteredEmail.includes("@") ||
       !enteredName ||
-      enteredName.trim() === '' ||
+      enteredName.trim() === "" ||
       !enteredComment ||
-      enteredComment.trim() === ''
+      enteredComment.trim() === ""
     ) {
       setIsInvalid(true);
       return;
@@ -36,7 +36,7 @@ function NewComment(props) {
   }
 
   return (
-    <form className={classes.form}>
+    <form className={classes.form} onSubmit={sendCommentHandler}>
       <div className={classes.row}>
         <div className={classes.control}>
           <label htmlFor='email'>Your email</label>

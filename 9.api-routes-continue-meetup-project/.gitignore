@@ -32,3 +32,4 @@ yarn-error.log*
 
 # vercel
 .vercel
+helpers/environment-variables.js
