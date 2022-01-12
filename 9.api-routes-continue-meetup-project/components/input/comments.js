@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from "react";
 
-import CommentList from './comment-list';
-import NewComment from './new-comment';
-import classes from './comments.module.css';
+import CommentList from "./comment-list";
+import NewComment from "./new-comment";
+import classes from "./comments.module.css";
 
 function Comments(props) {
   const { eventId } = props;
@@ -15,12 +15,23 @@ function Comments(props) {
 
   function addCommentHandler(commentData) {
     // send data to API
+    const enteredEmail = emailRegistrationRef.current.value;
+    const body = {
+      email: enteredEmail,
+    };
+    fetch("/api/", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
   return (
     <section className={classes.comments}>
       <button onClick={toggleCommentsHandler}>
-        {showComments ? 'Hide' : 'Show'} Comments
+        {showComments ? "Hide" : "Show"} Comments
       </button>
       {showComments && <NewComment onAddComment={addCommentHandler} />}
       {showComments && <CommentList />}

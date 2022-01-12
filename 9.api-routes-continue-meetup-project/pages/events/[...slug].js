@@ -1,13 +1,13 @@
-import { Fragment, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import Head from 'next/head';
+import { Fragment, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import Head from "next/head";
 
-import { getFilteredEvents } from '../../helpers/api-util';
-import EventList from '../../components/events/event-list';
-import ResultsTitle from '../../components/events/results-title';
-import Button from '../../components/ui/button';
-import ErrorAlert from '../../components/ui/error-alert';
+import { getFilteredEvents } from "../../helpers/api-util";
+import EventList from "../../components/events/event-list";
+import ResultsTitle from "../../components/events/results-title";
+import Button from "../../components/ui/button";
+import ErrorAlert from "../../components/ui/error-alert";
 
 function FilteredEventsPage(props) {
   const [loadedEvents, setLoadedEvents] = useState();
@@ -16,7 +16,8 @@ function FilteredEventsPage(props) {
   const filterData = router.query.slug;
 
   const { data, error } = useSWR(
-    'https://nextjs-course-c81cc-default-rtdb.firebaseio.com/events.json'
+    "https://next-js-course-pre-rendering-default-rtdb.europe-west1.firebasedatabase.app/events.json",
+    (url) => fetch(url).then((res) => res.json())
   );
 
   useEffect(() => {
