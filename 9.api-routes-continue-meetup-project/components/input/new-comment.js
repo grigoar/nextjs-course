@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
 import classes from "./new-comment.module.css";
+import NotificationContext from "../../store/notification-context";
 
 function NewComment(props) {
+  const notificationCtx = useContext(NotificationContext);
   const [isInvalid, setIsInvalid] = useState(false);
 
   const emailInputRef = useRef();
@@ -32,6 +34,12 @@ function NewComment(props) {
       email: enteredEmail,
       name: enteredName,
       text: enteredComment,
+    });
+
+    notificationCtx.showNotification({
+      title: "New Comment...",
+      message: "Adding new Comment",
+      status: "pending",
     });
   }
 
