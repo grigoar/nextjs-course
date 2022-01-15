@@ -1,6 +1,7 @@
 // /api/contact
 import { MongoClient } from "mongodb";
 import { MONGO_URL_CONNECT } from "../../helpers/environment-variables";
+
 async function handler(req, res) {
   if (req.method === "POST") {
     const { email, name, message } = req.body;
@@ -25,8 +26,12 @@ async function handler(req, res) {
     };
 
     let client;
+
+    const connectionString = `mongodb+srv://${process.env.mongodb_username}:${process.env.mongodb_password}@${process.env.mongodb_cluster}.yowls.mongodb.net/${process.env.mongodb_database}?retryWrites=true&w=majority`;
+
     try {
-      client = await MongoClient.connect(MONGO_URL_CONNECT);
+      // client = await MongoClient.connect(MONGO_URL_CONNECT);
+      client = await MongoClient.connect(connectionString);
     } catch (err) {
       res.status(500).json({ message: "Could not connect to database" });
       return;
