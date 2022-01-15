@@ -39,6 +39,7 @@ export default NextAuth({
         return {
           email: user.email,
         };
+
       },
     }),
   ],
