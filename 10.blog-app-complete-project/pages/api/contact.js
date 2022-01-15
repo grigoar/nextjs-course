@@ -1,6 +1,5 @@
 // /api/contact
 import { MongoClient } from "mongodb";
-import { MONGO_URL_CONNECT } from "../../helpers/environment-variables";
 
 async function handler(req, res) {
   if (req.method === "POST") {
